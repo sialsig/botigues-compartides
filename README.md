@@ -1,2 +1,8 @@
-# botigues-compartides
-Una red de tiendas de barrio en Barcelona gestionadas en común por productores, elaboradores y artesanos. Producto del campo, en la tienda de la esquina, con trato directo.
+# Botigues Compartides
+
+Presentació del projecte Botigues Compartides / Presentación del proyecto Botigues Compartides.
+
+Una xarxa de botigues de barri a Barcelona gestionades en comú per productors, elaboradors i artesans.
+
+- Web: https://sialsig.github.io/botigues-compartides/
+- En català: https://sialsig.github.io/botigues-compartides/#ca

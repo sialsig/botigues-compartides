@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Botigues Compartides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Layout: diapositivas a pantalla completa, tono de mercado de payés: hoja verde, remolacha y sol */
+:root {
+  --paper: #f3f6ef;
+  --ink: #1b2a1f;
+  --muted: #56655a;
+  --leaf: #2f6b3a;
+  --beet: #a3245a;
+  --sun: #e8b73a;
+  --sky: #2f6f8f;
+  --card: #ffffff;
+  --line: #d4dccf;
+  --leaf-soft: #e1ecdf;
+  --beet-soft: #f4e1e9;
+  --sun-soft: #f8eccb;
+  --sky-soft: #dceaf0;
+  --display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121a14; --ink: #e8efe6; --muted: #a2b2a5; --leaf: #7fc48a;
+    --beet: #e3739f; --sun: #f0c95e; --sky: #79b8d6; --card: #1b261d; --line: #2e3d31;
+    --leaf-soft: #20352a; --beet-soft: #3a2230; --sun-soft: #3a3220; --sky-soft: #1e3240;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #121a14; --ink: #e8efe6; --muted: #a2b2a5; --leaf: #7fc48a;
+  --beet: #e3739f; --sun: #f0c95e; --sky: #79b8d6; --card: #1b261d; --line: #2e3d31;
+  --leaf-soft: #20352a; --beet-soft: #3a2230; --sun-soft: #3a3220; --sky-soft: #1e3240;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--paper); color: var(--ink);
+  font: 400 1.05rem/1.55 var(--body);
+}
+html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
+.slide {
+  min-height: 100vh; scroll-snap-align: start;
+  display: grid; align-content: center;
+  padding-block: 5rem; padding-inline: max(1rem, 5vw);
+  position: relative; border-bottom: 1px solid var(--line);
+}
+.tag {
+  font: 600 .78rem/1 var(--body); letter-spacing: .14em; text-transform: uppercase;
+  color: var(--beet); display: flex; align-items: center; gap: .6rem; margin-bottom: 1.2rem;
+}
+.tag::before { content: ""; width: 1.6rem; height: 3px; background: var(--beet); border-radius: 2px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.8rem, 9vw, 6.5rem); font-weight: 800; line-height: .95; color: var(--leaf); letter-spacing: -.02em; }
+h2 { font-size: clamp(1.9rem, 5vw, 3.4rem); font-weight: 700; line-height: 1.05; max-width: 22ch; letter-spacing: -.02em; }
+h3 { font-weight: 700; }
+.lead { font-size: clamp(1.1rem, 2.2vw, 1.45rem); max-width: 50ch; color: var(--muted); margin: 1.4rem 0 0; }
+p { max-width: 62ch; }
+.note { font-size: .88rem; color: var(--muted); margin: 1.2rem 0 0; }
+.grid { display: grid; gap: 1rem; margin-top: 2.4rem; }
+.g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.box { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.4rem; min-width: 0; }
+.box h3 { font-size: 1.3rem; line-height: 1.15; margin-bottom: .45rem; }
+.box p { margin: 0; color: var(--muted); font-size: .98rem; }
+.box ul { margin: .6rem 0 0; padding-left: 1.1rem; display: grid; gap: .4rem; color: var(--muted); font-size: .98rem; }
+
+/* Portada */
+.cover h1 span { color: var(--beet); display: block; }
+.chips { margin-top: 2.4rem; display: flex; gap: .5rem; flex-wrap: wrap; }
+.chip { font: 600 .85rem/1 var(--body); padding: .55rem .9rem; border-radius: 999px; border: 1.5px solid var(--leaf); color: var(--leaf); }
+
+/* Problema */
+.prob { border-top: 4px solid var(--beet); padding-top: 1rem; min-width: 0; }
+.prob:nth-child(2) { border-color: var(--sun); }
+.prob:nth-child(3) { border-color: var(--leaf); }
+.prob:nth-child(4) { border-color: var(--sky); }
+.prob h3 { font-size: 1.35rem; line-height: 1.15; margin-bottom: .4rem; }
+.prob p { margin: 0; color: var(--muted); font-size: .98rem; }
+
+/* Gran cifra */
+.big-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 3rem; align-items: center; margin-top: 2.4rem; }
+.big { font: 800 clamp(5rem, 16vw, 11rem)/.85 var(--display); color: var(--leaf); letter-spacing: -.04em; }
+.big small { display: block; font: 600 1.05rem/1.3 var(--body); color: var(--ink); letter-spacing: 0; margin-top: 1rem; max-width: 22ch; }
+.shift { display: grid; gap: .8rem; }
+.shift div { display: grid; grid-template-columns: minmax(0, 1fr) 1.5rem minmax(0, 1fr); gap: .6rem; align-items: center; }
+.shift .old { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--beet); }
+.shift .arrow { color: var(--beet); font-weight: 700; text-align: center; }
+.shift .new { font-weight: 600; }
+.shift-head { font: 600 .75rem/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+/* Claves */
+.keys { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 2.4rem; }
+.key { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 1.6rem; display: grid; gap: 1.1rem; align-content: start; min-width: 0; }
+.key h3 { font-size: 1.6rem; line-height: 1.1; }
+.k1 h3 { color: var(--sun); } .k2 h3 { color: var(--beet); } .k3 h3 { color: var(--sky); }
+:root .k1 h3 { color: color-mix(in srgb, var(--sun) 55%, var(--ink)); }
+.key p { margin: 0; color: var(--muted); font-size: .98rem; }
+.eq { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; font-size: .85rem; }
+.eq span { padding: .35rem .65rem; border-radius: 999px; background: var(--sun-soft); font-weight: 600; }
+.eq i { font-style: normal; font-weight: 700; color: var(--muted); }
+.eq strong { padding: .35rem .7rem; border-radius: 999px; background: var(--leaf); color: var(--paper); }
+.spaces { display: grid; gap: .4rem; }
+.spaces span { padding: .5rem .75rem; border-radius: 8px; background: var(--beet-soft); font-weight: 600; font-size: .9rem; }
+.net { width: 100%; max-width: 100%; height: auto; }
+.net .links line { stroke: var(--sky); stroke-width: 2.5; stroke-dasharray: 4 5; }
+.net .nodes circle { fill: var(--sky-soft); stroke: var(--sky); stroke-width: 3; }
+
+/* Socios */
+.who .box { border-top: 5px solid var(--leaf); }
+.who .box:nth-child(2) { border-top-color: var(--beet); }
+.who .box:nth-child(3) { border-top-color: var(--sun); }
+.who .role { font: 600 .78rem/1 var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .7rem; }
+
+/* Plano de la tienda */
+.plan-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 2rem; margin-top: 2.2rem; align-items: start; }
+.plan {
+  display: grid; gap: 6px; padding: 10px; border: 3px solid var(--ink); border-radius: 6px; background: var(--card);
+  grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: 70px 90px 90px 70px;
+  grid-template-areas:
+    "frio frio frio frio frio frio"
+    "seco gon  gon  gon  gon  deg"
+    "seco gon  gon  gon  gon  deg"
+    "art  art  caja lock door door";
+  font: 600 .82rem/1.2 var(--body);
+}
+.zone { border-radius: 4px; padding: .5rem .6rem; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.zone span { font-weight: 400; font-size: .74rem; color: var(--muted); }
+.z-frio { grid-area: frio; background: var(--sky-soft); color: var(--sky); }
+.z-seco { grid-area: seco; background: var(--sun-soft); }
+.z-gon { grid-area: gon; background: var(--sun-soft); align-items: center; text-align: center; }
+.z-deg { grid-area: deg; background: var(--beet-soft); color: var(--beet); }
+.z-art { grid-area: art; background: var(--leaf-soft); color: var(--leaf); }
+.z-caja { grid-area: caja; background: var(--paper); border: 1px dashed var(--line); }
+.z-lock { grid-area: lock; background: var(--paper); border: 1px dashed var(--line); }
+.z-door { grid-area: door; border: 0; border-top: 3px dashed var(--muted); border-radius: 0; color: var(--muted); align-items: center; }
+.tariffs { display: grid; gap: .9rem; }
+.tariff { display: grid; grid-template-columns: 1rem minmax(0, 1fr); gap: .8rem; align-items: start; }
+.tariff i { width: 1rem; height: 1rem; border-radius: 3px; margin-top: .3rem; }
+.tariff b { display: block; }
+.tariff p { margin: .1rem 0 0; color: var(--muted); font-size: .94rem; }
+
+/* Horas */
+.hours { margin-top: 2.4rem; }
+.hbar { display: flex; height: 64px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.hbar div { display: flex; align-items: center; padding-inline: .7rem; font: 600 .85rem/1.1 var(--body); min-width: 0; overflow: hidden; white-space: nowrap; }
+.h-open { flex: 3120; background: var(--leaf); color: var(--paper); }
+.h-vac { flex: 330; background: var(--sun); color: #2a2208; }
+.h-fest { flex: 250; background: var(--beet); color: var(--paper); }
+.h-imp { flex: 200; background: var(--sky); color: var(--paper); }
+.hlegend { display: flex; flex-wrap: wrap; gap: .6rem 1.6rem; margin-top: .9rem; font-size: .92rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.hlegend b { color: var(--ink); }
+.hlegend i { display: inline-block; width: .8rem; height: .8rem; border-radius: 2px; margin-right: .4rem; vertical-align: -1px; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 2rem; }
+.fact { border-left: 3px solid var(--leaf); padding-left: 1rem; min-width: 0; }
+.fact strong { display: block; font: 700 2rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.fact span { color: var(--muted); font-size: .94rem; }
+
+/* Tecnología */
+.tech .box h3 { color: var(--leaf); }
+.tech .box:nth-child(3) { background: var(--leaf-soft); border-color: transparent; }
+
+/* Calculadora */
+.calc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 2rem; margin-top: 2.2rem; align-items: start; }
+.controls { display: grid; gap: 1.1rem; }
+.controls label { display: grid; gap: .35rem; font-weight: 600; font-size: .92rem; }
+.controls select, .controls input[type="number"] {
+  font: inherit; font-weight: 400; padding: .6rem .7rem; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--card); color: var(--ink); width: 100%;
+}
+.controls input[type="range"] { width: 100%; accent-color: var(--leaf); }
+.controls output { font-variant-numeric: tabular-nums; color: var(--leaf); }
+.controls fieldset { border: 1px solid var(--line); border-radius: 10px; padding: .9rem 1rem 1rem; display: grid; gap: .9rem; margin: 0; }
+.controls legend { font: 600 .78rem/1 var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--beet); padding-inline: .3rem; }
+.result { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.4rem; min-width: 0; }
+.result table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.result td { padding: .55rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.result td:last-child { text-align: right; white-space: nowrap; padding-left: 1rem; }
+.result td small { display: block; color: var(--muted); font-size: .8rem; }
+.result tr.total td { border-bottom: 0; font: 700 1.35rem/1.2 var(--display); padding-top: .9rem; }
+.cover-bar { margin-top: 1.2rem; }
+.cover-bar .track { height: 12px; border-radius: 6px; background: var(--leaf-soft); overflow: hidden; }
+.cover-bar .fill { height: 100%; background: var(--beet); width: 0; transition: width .3s; }
+.cover-bar p { margin: .5rem 0 0; font-size: .92rem; color: var(--muted); }
+.cover-bar b { color: var(--ink); }
+
+/* Barrio */
+.acts { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 2.2rem; max-width: 60rem; }
+.act { padding: .8rem 1.1rem; border-radius: 999px; background: var(--card); border: 1px solid var(--line); font-weight: 600; }
+.act:nth-child(3n+1) { background: var(--leaf-soft); border-color: transparent; }
+.act:nth-child(3n+2) { background: var(--beet-soft); border-color: transparent; }
+.act:nth-child(3n) { background: var(--sun-soft); border-color: transparent; }
+
+/* Fases */
+.steps { list-style: none; padding: 0; margin: 2.4rem 0 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; }
+.steps li { display: grid; gap: .6rem; align-content: start; min-width: 0; position: relative; }
+.steps .n { width: 3rem; height: 3rem; border-radius: 50%; background: var(--leaf); color: var(--paper); display: grid; place-items: center; font: 700 1.2rem/1 var(--display); }
+.steps h3 { font-size: 1.2rem; line-height: 1.2; }
+.steps p { margin: 0; color: var(--muted); font-size: .95rem; }
+
+/* Aliados */
+.allies { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 2.2rem; }
+.ally { padding: 1rem 1.1rem; border-radius: 10px; border: 1px solid var(--line); background: var(--card); min-width: 0; }
+.ally b { display: block; font-family: var(--display); font-size: 1.1rem; }
+.ally span { color: var(--muted); font-size: .9rem; }
+.nets { margin-top: 1.4rem; color: var(--muted); }
+.nets b { color: var(--ink); }
+
+/* Mapa */
+.map-slide { align-content: start; padding-block: 2rem; padding-inline: 1rem; }
+.map-slide .tag, .map-slide h2, .map-slide .map-sub { margin-inline: max(0rem, calc(5vw - 1rem)); }
+.map-sub { margin-top: .6rem; color: var(--muted); }
+.map-frame { margin-top: 1rem; width: 100%; height: max(560px, calc(100vh - 12rem)); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--card); }
+.map-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+.map-link { margin-top: .6rem; margin-inline: max(0rem, calc(5vw - 1rem)); font-size: .9rem; color: var(--muted); }
+.map-link a, a { color: var(--leaf); font-weight: 600; }
+
+/* Cuestionario */
+.survey { align-content: start; }
+.block { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 1fr); gap: 1.6rem; padding-block: 1.8rem; border-top: 1px solid var(--line); margin-top: 1.8rem; }
+.block-head { display: grid; gap: .5rem; align-content: start; }
+.bn { justify-self: start; font: 600 .75rem/1 var(--body); letter-spacing: .12em; text-transform: uppercase; padding: .45rem .7rem; border-radius: 999px; color: var(--paper); background: var(--leaf); }
+.b2 .bn { background: var(--beet); }
+.b3 .bn { background: var(--sky); }
+.block-head h3 { font-size: 1.4rem; line-height: 1.15; }
+.block-head p { margin: 0; color: var(--muted); font-size: .95rem; }
+.qgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: .8rem; min-width: 0; }
+.q { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.1rem 1.1rem; min-width: 0; display: grid; gap: .6rem; align-content: start; grid-template-columns: auto minmax(0, 1fr); }
+.qn { width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid; place-items: center; font: 700 .85rem/1 var(--display); background: var(--leaf-soft); color: var(--leaf); }
+.b2 .qn { background: var(--beet-soft); color: var(--beet); }
+.b3 .qn { background: var(--sky-soft); color: var(--sky); }
+.q .flag { justify-self: end; align-self: center; font: 600 .7rem/1 var(--body); font-style: normal; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border: 1px dashed var(--muted); border-radius: 999px; padding: .3rem .55rem; }
+.q p { grid-column: 1 / -1; margin: 0; font: 600 1rem/1.35 var(--display); max-width: none; }
+.q .opts { grid-column: 1 / -1; }
+.qn-wide { width: auto; padding-inline: .6rem; border-radius: 999px; }
+.subq { grid-column: 1 / -1; margin: 0; padding-left: 1.1rem; display: grid; gap: .4rem; font-size: .92rem; color: var(--muted); }
+.opts { display: flex; flex-wrap: wrap; gap: .35rem; }
+.opts span { font-size: .8rem; line-height: 1.25; padding: .3rem .65rem; border-radius: 999px; background: var(--paper); border: 1px solid var(--line); color: var(--muted); }
+.opts span.open { border-style: dashed; }
+.ideas { grid-column: 2; display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; font-size: .9rem; color: var(--muted); }
+.ideas b { color: var(--ink); margin-right: .2rem; }
+.ideas span { padding: .35rem .75rem; border-radius: 8px; border: 1.5px dashed var(--beet); color: var(--ink); }
+
+/* Navegación */
+.nav {
+  position: fixed; right: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  display: flex; gap: .4rem; align-items: center; z-index: 5;
+  background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: .3rem;
+}
+.nav button { width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 0; cursor: pointer; background: transparent; color: var(--ink); font: 600 1.1rem/1 var(--body); }
+.nav button:hover, .nav button:focus-visible { background: var(--leaf); color: var(--paper); outline: none; }
+.lang {
+  position: fixed; right: 1rem; top: calc(1rem + env(safe-area-inset-top, 0px)); z-index: 6;
+  display: flex; gap: 2px; padding: 3px; border-radius: 999px;
+  background: var(--card); border: 1px solid var(--line);
+}
+.lang button {
+  border: 0; cursor: pointer; border-radius: 999px; padding: .45rem .8rem;
+  font: 600 .82rem/1 var(--body); letter-spacing: .06em; background: transparent; color: var(--muted);
+}
+.lang button[aria-pressed="true"] { background: var(--leaf); color: var(--paper); }
+.lang button:hover { color: var(--ink); }
+.lang button[aria-pressed="true"]:hover { color: var(--paper); }
+
+.nav .count { font: 500 .85rem/1 var(--body); padding-inline: .4rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+:focus-visible { outline: 2px solid var(--beet); outline-offset: 2px; }
+
+@media (max-width: 960px) {
+  .g4, .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .g3, .allies { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .keys { grid-template-columns: minmax(0, 1fr); }
+  .big-split, .plan-wrap, .calc { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .block { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .ideas { grid-column: 1; }
+}
+@media (max-width: 620px) {
+  .g2, .g3, .g4, .steps, .allies, .facts { grid-template-columns: minmax(0, 1fr); }
+  .block { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .ideas { grid-column: 1; }
+  .plan { grid-template-rows: 60px 70px 70px 60px; font-size: .72rem; }
+  .zone span { display: none; }
+  .hbar div { font-size: 0; }
+  .map-frame { height: 75vh; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .cover-bar .fill { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="lang" role="group" aria-label="Idioma / Llengua">
+  <button type="button" data-lang="es" aria-pressed="true">ES</button>
+  <button type="button" data-lang="ca" aria-pressed="false">CA</button>
+</div>
+
+<section class="slide cover" id="inicio">
+  <div class="tag">Proyecto</div>
+  <h1>Botigues<span>Compartides</span></h1>
+  <p class="lead">Una red de tiendas de barrio en Barcelona gestionadas en común por productores, elaboradores y artesanos. Producto del campo, en la tienda de la esquina, con trato directo.</p>
+  <div class="chips">
+    <span class="chip">Circuito corto</span>
+    <span class="chip">Ecológico</span>
+    <span class="chip">De temporada</span>
+    <span class="chip">Precio justo</span>
+    <span class="chip">Trazabilidad total</span>
+  </div>
+</section>
+
+<section class="slide" id="porque">
+  <div class="tag">Por qué</div>
+  <h2>Los barrios pierden tiendas y el campo no llega a la ciudad</h2>
+  <div class="grid g4">
+    <div class="prob"><h3>Desertización comercial</h3><p>Cierran tiendas de barrio y crecen la oferta turística y las grandes cadenas. Quedan locales vacíos y paradas de mercado cerradas.</p></div>
+    <div class="prob"><h3>Pobreza alimentaria</h3><p>En muchos barrios cuesta encontrar producto fresco y de calidad a precio justo.</p></div>
+    <div class="prob"><h3>El productor no puede solo</h3><p>Le falta tiempo para producir y vender a la vez, y variedad para llenar una tienda todo el año.</p></div>
+    <div class="prob"><h3>Costes muy altos</h3><p>Alquiler, personal y la electricidad del frío industrial hacen inviable una tienda individual.</p></div>
+  </div>
+  <p class="note">Alineado con la Estrategia de Alimentación Saludable y Sostenible Barcelona 2030 y el espacio Agròpolis.</p>
+</section>
+
+<section class="slide" id="modelo">
+  <div class="tag">La idea</div>
+  <h2>Una tienda que no vive del margen, sino del espacio compartido</h2>
+  <div class="big-split">
+    <div class="big">100%<small>del precio de venta llega íntegro a quien produce</small></div>
+    <div class="shift">
+      <div class="shift-head"><span>Tienda convencional</span><span></span><span>Botiga Compartida</span></div>
+      <div><span class="old">Compra y revende con margen</span><span class="arrow">→</span><span class="new">El productor fija su precio</span></div>
+      <div><span class="old">Un propietario asume todo</span><span class="arrow">→</span><span class="new">Costes y tareas repartidos</span></div>
+      <div><span class="old">Producto de gran distribución</span><span class="arrow">→</span><span class="new">Solo producción propia</span></div>
+      <div><span class="old">Punto de despacho</span><span class="arrow">→</span><span class="new">Espacio de encuentro del barrio</span></div>
+    </div>
+  </div>
+  <p class="note">Los productores alquilan su espacio de exposición y una cooperativa (o entidad similar) gestiona la tienda.</p>
+</section>
+
+<section class="slide" id="claves">
+  <div class="tag">Tres claves</div>
+  <h2>Variedad, espacios que ya existen y una red</h2>
+  <div class="keys">
+    <article class="key k1">
+      <h3>Variedad todo el año</h3>
+      <div class="eq"><span>Fresco</span><i>+</i><span>Elaborados</span><i>+</i><span>Artesanía</span><i>=</i><strong>Oferta completa</strong></div>
+      <p>Un solo productor no tiene variedad ni stock para llenar una tienda todo el año, y a menudo acaba comprando a la gran distribución. Juntos, la oferta es completa y diversa.</p>
+    </article>
+    <article class="key k2">
+      <h3>Espacios que ya existen</h3>
+      <div class="spaces"><span>Locales vacíos en planta baja</span><span>Paradas de mercado municipal</span><span>Equipamientos comunitarios</span></div>
+      <p>Y alianzas con otras iniciativas que necesiten local comercial, almacén o un nodo logístico con registro sanitario.</p>
+    </article>
+    <article class="key k3">
+      <h3>Una red de tiendas</h3>
+      <svg class="net" viewBox="0 0 240 90" role="img" aria-label="Tiendas conectadas en red">
+        <g class="links"><line x1="30" y1="60" x2="95" y2="25"/><line x1="95" y1="25" x2="160" y2="55"/><line x1="160" y1="55" x2="215" y2="22"/><line x1="30" y1="60" x2="160" y2="55"/><line x1="95" y1="25" x2="215" y2="22"/></g>
+        <g class="nodes"><circle cx="30" cy="60" r="11"/><circle cx="95" cy="25" r="11"/><circle cx="160" cy="55" r="11"/><circle cx="215" cy="22" r="11"/></g>
+      </svg>
+      <p>Tiendas conectadas entre sí, que se apoyan para que también sean viables en los barrios con menos recursos.</p>
+    </article>
+  </div>
+</section>
+
+<section class="slide" id="socios">
+  <div class="tag">Quién participa</div>
+  <h2>Dos niveles de socios y un equipo estable</h2>
+  <div class="grid g3 who">
+    <div class="box">
+      <div class="role">Socios principales</div>
+      <h3>Productores, elaboradores y artesanos</h3>
+      <ul>
+        <li>Deciden el modelo y la estrategia</li>
+        <li>Legalmente constituidos</li>
+        <li>Más del 50% de ingredientes y cantidad de producción propia o local</li>
+        <li>Atienden en la tienda un día a la semana</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="role">Socios secundarios</div>
+      <h3>Vecindario y entidades</h3>
+      <ul>
+        <li>Pagan una cuota periódica que ayuda a cubrir los costes fijos</li>
+        <li>Acceso preferente o condiciones especiales</li>
+        <li>Validan la propuesta en el grupo motor</li>
+        <li>Dinamizan actividades</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="role">Gestión</div>
+      <h3>Cooperativa gestora y equipo de tienda</h3>
+      <ul>
+        <li>Reglamento interno y acuerdos con cada productor</li>
+        <li>3 personas con salario digno</li>
+        <li>Logística compartida</li>
+        <li>Transparencia total de ventas</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="tienda">
+  <div class="tag">Dentro de la tienda</div>
+  <h2>Cada zona tiene su tarifa según lo que cuesta</h2>
+  <div class="plan-wrap">
+    <div class="plan" role="img" aria-label="Plano tipo de una tienda de 100 a 150 metros cuadrados con sus zonas">
+      <div class="zone z-frio">Murales de frío y congelado<span>Carne, lácteos, fruta delicada, platos preparados</span></div>
+      <div class="zone z-seco">Pared seco<span>Conservas, aceites</span></div>
+      <div class="zone z-gon">Góndolas centrales<span>Huerta no refrigerada y despensa</span></div>
+      <div class="zone z-deg">Productor de la semana<span>Degustación</span></div>
+      <div class="zone z-art">Córner artesano<span>Escaparate</span></div>
+      <div class="zone z-caja">Caja inteligente</div>
+      <div class="zone z-lock">Smart&shy;lockers</div>
+      <div class="zone z-door">Entrada</div>
+    </div>
+    <div class="tariffs">
+      <div class="tariff"><i style="background: var(--sun)"></i><div><b>Lineales secos · tarifa base</b><p>La más económica. Mobiliario de 80 a 120 €/m². Pequeña prima en zonas de paso o a la altura de los ojos.</p></div></div>
+      <div class="tariff"><i style="background: var(--sky)"></i><div><b>Refrigerado y congelado · tarifa alta</b><p>Maquinaria de 250 a 350 €/m² y electricidad de 12 a 18 €/m² al mes, repercutidas en la tarifa.</p></div></div>
+      <div class="tariff"><i style="background: var(--leaf)"></i><div><b>Córner artesano · tarifa ajustada</b><p>Ropa, pintura, muebles o decoración. Sin frío ni iluminación alimentaria, aprovecha el paso de clientes.</p></div></div>
+      <div class="tariff"><i style="background: var(--beet)"></i><div><b>Presencia rotativa</b><p>Cada semana un productor atiende en persona, en las horas de más afluencia.</p></div></div>
+    </div>
+  </div>
+  <p class="note">Plano orientativo de un local tipo de 100 a 150 m².</p>
+</section>
+
+<section class="slide" id="equipo">
+  <div class="tag">Horario y equipo</div>
+  <h2>Abierta 60 horas a la semana sin horas extra</h2>
+  <div class="hours">
+    <div class="hbar" aria-label="Bolsa de 3.900 horas anuales del equipo">
+      <div class="h-open">Apertura al público · 3.120 h</div>
+      <div class="h-vac">330</div>
+      <div class="h-fest">250</div>
+      <div class="h-imp">200</div>
+    </div>
+    <div class="hlegend">
+      <span><i style="background: var(--leaf)"></i><b>3.120 h</b> apertura (10 h × 6 días)</span>
+      <span><i style="background: var(--sun)"></i><b>330 h</b> vacaciones</span>
+      <span><i style="background: var(--beet)"></i><b>250 h</b> descanso por festivos</span>
+      <span><i style="background: var(--sky)"></i><b>200 h</b> bajas e imprevistos</span>
+    </div>
+  </div>
+  <div class="facts">
+    <div class="fact"><strong>3 personas</strong><span>25 h semanales cada una, 3.900 h al año en total</span></div>
+    <div class="fact"><strong>780 h</strong><span>de margen para cubrir ausencias sin cerrar</span></div>
+    <div class="fact"><strong>1.250 €</strong><span>brutos al mes por persona, sobre una base de 2.000 € a jornada completa</span></div>
+  </div>
+</section>
+
+<section class="slide" id="tecnologia">
+  <div class="tag">Tecnología</div>
+  <h2>Herramientas para que compartir sea fácil</h2>
+  <div class="grid g3 tech">
+    <div class="box"><h3>Gestión compartida</h3><p>Turnos y bolsa de horas, ventas de cada productor en tiempo real y cobro de cuotas de socios.</p></div>
+    <div class="box"><h3>IA contra el desperdicio</h3><p>Predicción de demanda para planificar cultivos en común y ajustar la oferta al perfil de cada barrio.</p></div>
+    <div class="box"><h3>Trazabilidad con SialSIG</h3><p>Etiquetas QR con la historia del producto, la fecha de cosecha y la ubicación de la finca. Origen y temporada en albaranes y facturas.</p></div>
+    <div class="box"><h3>Caja y báscula conectadas</h3><p>Cobro automático de efectivo y balanzas vinculadas al inventario compartido.</p></div>
+    <div class="box"><h3>Smartlockers</h3><p>Taquillas transparentes y refrigeradas para recoger pedidos o comprar fuera de horario.</p></div>
+    <div class="box"><h3>Logística colaborativa</h3><p>Rutas compartidas entre productores para reducir costes y huella de carbono.</p></div>
+  </div>
+</section>
+
+<section class="slide" id="costes">
+  <div class="tag">Números</div>
+  <h2>¿Cuánto cuesta abrir una tienda al mes?</h2>
+  <div class="calc">
+    <form class="controls" id="calc-form">
+      <label for="district">Distrito
+        <select id="district">
+          <option value="26">Ciutat Vella · 26 €/m²</option>
+          <option value="28">Eixample · 28 €/m²</option>
+          <option value="20">Gràcia · 20 €/m²</option>
+          <option value="24">Sarrià-Sant Gervasi · 24 €/m²</option>
+          <option value="16">Sant Martí · 16 €/m²</option>
+          <option value="14">Sants-Montjuïc · 14 €/m²</option>
+          <option value="17">Les Corts · 17 €/m²</option>
+          <option value="11">Horta-Guinardó · 11 €/m²</option>
+          <option value="11" selected>Sant Andreu · 11 €/m²</option>
+          <option value="9">Nou Barris · 9 €/m²</option>
+        </select>
+      </label>
+      <label for="m2">Superficie del local: <output id="m2-out">100 m²</output>
+        <input type="range" id="m2" min="60" max="200" step="10" value="100">
+      </label>
+      <fieldset>
+        <legend>Socios del barrio (ejemplo)</legend>
+        <label for="members">Número de socios: <output id="members-out">200</output>
+          <input type="range" id="members" min="0" max="1000" step="25" value="200">
+        </label>
+        <label for="fee">Cuota anual
+          <select id="fee">
+            <option value="12">12 €/año</option>
+            <option value="24" selected>24 €/año</option>
+            <option value="60">60 €/año</option>
+            <option value="120">120 €/año</option>
+          </select>
+        </label>
+      </fieldset>
+    </form>
+    <div class="result" aria-live="polite">
+      <table>
+        <tbody>
+          <tr><td>Alquiler<small>Precio medio de oferta del distrito</small></td><td id="r-rent"></td></tr>
+          <tr><td>Suministros y tasas<small>Luz, agua, basuras, IBI, mantenimiento, seguros (17–30 €/m²)</small></td><td id="r-op"></td></tr>
+          <tr><td>Amortización del equipamiento<small>Frío, mobiliario y TPV (5,50–7,50 €/m²)</small></td><td id="r-am"></td></tr>
+          <tr><td>Equipo de tienda<small>3 × 1.250 € brutos</small></td><td id="r-staff"></td></tr>
+          <tr class="total"><td>Total al mes</td><td id="r-total"></td></tr>
+        </tbody>
+      </table>
+      <div class="cover-bar">
+        <div class="track"><div class="fill" id="r-fill"></div></div>
+        <p id="r-cover"></p>
+      </div>
+    </div>
+  </div>
+  <p class="note">Estimación con los datos del proyecto técnico (precios de oferta en portales, marzo de 2026). No incluye cotizaciones a la Seguridad Social, IVA ni la inversión inicial de 42.000 a 62.000 € en equipamiento.</p>
+</section>
+
+<section class="slide" id="barrio">
+  <div class="tag">Barrio vivo</div>
+  <h2>Más que una tienda: un punto de encuentro</h2>
+  <p class="lead">La tienda sale a la calle y recupera el espíritu del mercado de payés, con la persona que produce detrás del mostrador.</p>
+  <div class="acts">
+    <span class="act">Talleres sobre alimentación</span>
+    <span class="act">Degustaciones y jornadas gastronómicas</span>
+    <span class="act">Charla con el productor de la semana</span>
+    <span class="act">Actividades en la calle</span>
+    <span class="act">Fiestas de barrio</span>
+    <span class="act">Galería de arte y artesanía local</span>
+    <span class="act">Cocina compartida para el día a día</span>
+    <span class="act">Sesiones previas de difusión</span>
+  </div>
+</section>
+
+<section class="slide" id="fases">
+  <div class="tag">Hoja de ruta</div>
+  <h2>Cinco fases hasta abrir la primera tienda</h2>
+  <ol class="steps">
+    <li><span class="n">1</span><h3>Diagnosis</h3><p>Renta, pobreza alimentaria y gasto familiar por barrios.</p></li>
+    <li><span class="n">2</span><h3>Modelo</h3><p>Roles, aspectos legales, gobernanza y propuesta de precios.</p></li>
+    <li><span class="n">3</span><h3>Prospección</h3><p>Locales vacíos, paradas de mercado, acuerdos con comercios y viabilidad.</p></li>
+    <li><span class="n">4</span><h3>Alianzas</h3><p>Validación con Agròpolis y los grupos motor del barrio.</p></li>
+    <li><span class="n">5</span><h3>Apertura</h3><p>Plan final de ejecución y puesta en marcha.</p></li>
+  </ol>
+</section>
+
+<section class="slide" id="aliados">
+  <div class="tag">Equipo y aliados</div>
+  <h2>Una red que ya está en marcha</h2>
+  <div class="allies">
+    <div class="ally"><b>Espai Ambiental</b><span>Redacción del proyecto y coordinación de la red</span></div>
+    <div class="ally"><b>TANDEM SCCL</b><span>Modelo de negocio y viabilidad</span></div>
+    <div class="ally"><b>Antígona</b><span>Prospección territorial, intervención comunitaria y grupos motor vecinales</span></div>
+    <div class="ally"><b>SialSIG</b><span>Digitalización de productores, grupos motor y referentes productores en los barrios</span></div>
+    <div class="ally"><b>Agròpolis</b><span>Estrategia de Alimentación Saludable y Sostenible BCN 2030</span></div>
+  </div>
+  <p class="nets"><b>Redes del sector:</b> Coordinadora de Mercat de Pagès, Terra Pagesa, Xarxa d'Obradors Compartits y agrupaciones de artesanos.</p>
+</section>
+
+<section class="slide map-slide" id="mapa">
+  <div class="tag">Mapa</div>
+  <h2>Dónde tiene sentido abrir</h2>
+  <p class="map-sub">Barcelona y su área metropolitana, con origen de producto en los parques agrarios. Prueba piloto propuesta en Bon Pastor y Baró de Viver (Sant Andreu).</p>
+  <div class="map-frame">
+    <iframe src="https://eulaliabota.maps.arcgis.com/apps/dashboards/8319752e46a2427ab6d5021f96f71a17" title="Mapa del proyecto Botigues Compartides" loading="lazy" allowfullscreen></iframe>
+  </div>
+  <p class="map-link"><span>Información del Institut Metròpoli elaborada por SialSIG. Parte de los datos está pendiente de autorización para su difusión.</span> ¿No se ve el mapa? <a href="https://eulaliabota.maps.arcgis.com/apps/dashboards/8319752e46a2427ab6d5021f96f71a17" target="_blank" rel="noopener">Ábrelo en ArcGIS</a></p>
+</section>
+
+<section class="slide survey" id="opinion">
+  <div class="tag">Encuesta al vecindario</div>
+  <h2>Lo construimos con el vecindario</h2>
+  <p class="lead">Un cuestionario para validar el modelo: devolver la compra de proximidad a los barrios, acercar a quien produce y a quien consume, y frenar la desertización comercial.</p>
+
+  <div class="block b1">
+    <div class="block-head"><span class="bn">Bloque 1</span><h3>Hábitos y necesidades de consumo en el barrio</h3></div>
+    <div class="qgrid">
+      <div class="q"><b class="qn">1</b><p>¿Echas de menos producto fresco, de temporada y con trato directo con el payés en tu barrio?</p><div class="opts"><span>Mucho</span><span>Bastante</span><span>Poco</span><span>Nada</span></div></div>
+      <div class="q"><b class="qn">2</b><p>¿Qué productos te interesaría comprar en esta tienda?</p><div class="opts"><span>Fresco de huerta</span><span>Elaborados: quesos, embutidos, conservas, platos preparados</span><span>Artesanía local: decoración, muebles, ropa</span></div></div>
+      <div class="q"><b class="qn">3</b><p>¿Te importa tener etiquetas QR con la historia del producto, la fecha de cosecha y la finca?</p><div class="opts"><span>Sí</span><span>No</span></div></div>
+      <div class="q"><b class="qn">4</b><p>¿Compras en mercados municipales y tiendas de barrio?</p><div class="opts"><span>Sí</span><span>No</span></div></div>
+      <div class="q"><b class="qn">5</b><p>Si no vas, ¿por qué?</p><div class="opts"><span>Tener que comprar en varios sitios</span><span>Esperar en cada tienda o parada</span><span>El trato</span><span>El precio</span><span>Otros</span></div></div>
+      <div class="q"><b class="qn">6</b><p>¿Cómo debería ser y qué debería ofrecer una tienda para ir antes que al supermercado?</p><div class="opts"><span class="open">Respuesta abierta</span></div></div>
+    </div>
+  </div>
+
+  <div class="block b2">
+    <div class="block-head"><span class="bn">Bloque 2</span><h3>Dinamización comunitaria</h3><p>La tienda como punto de encuentro.</p></div>
+    <div class="qgrid">
+      <div class="q"><b class="qn">7</b><p>¿Qué actividades comunitarias te gustaría encontrar?</p><div class="opts"><span>Talleres sobre alimentación</span><span>Degustaciones y jornadas gastronómicas</span><span>Charla con el productor (uno distinto cada semana)</span><span>Actividades en la calle</span><span>Fiestas de barrio</span><span>Otras</span></div></div>
+      <div class="q"><b class="qn qn-wide">8–10</b><p>Taquillas inteligentes</p><ul class="subq"><li>¿Debería tenerlas la tienda, u otras automatizaciones, si así baja el precio?</li><li>¿Las usarías para recoger pedidos fuera de horario, por ejemplo después del trabajo?</li><li>¿Y taquillas transparentes donde ver el producto y comprarlo directamente?</li></ul></div>
+      <div class="q"><b class="qn">11</b><p>¿Qué te parece comprar donde el precio de venta lo recibe íntegro quien produce o elabora?</p></div>
+      <div class="q"><b class="qn">12</b><em class="flag">En revisión</em><p>¿Qué sueldo debería tener un productor? ¿Y el personal de la tienda?</p></div>
+      <div class="q"><b class="qn">13</b><p>¿La tienda podría ser también una galería para exponer artesanía y pintura que decore el local?</p></div>
+      <div class="q"><b class="qn">14</b><p>¿Te interesaría comida preparada para el día a día, de una cocina compartida?</p></div>
+    </div>
+    <div class="ideas"><b>Ideas a contrastar</b><span>Tienda vinculada a las fiestas de barrio</span><span>Degustación siempre disponible, como una parada de mercado con barra</span></div>
+  </div>
+
+  <div class="block b3">
+    <div class="block-head"><span class="bn">Bloque 3</span><h3>Socio secundario y participación</h3><p>La ciudadanía ayuda a sostener el local y comparte sus costes.</p></div>
+    <div class="qgrid">
+      <div class="q"><b class="qn">15</b><p>¿Pagarías una cuota periódica como socio para sostener los costes fijos, con acceso exclusivo o condiciones preferentes? ¿Cuánto?</p><div class="opts"><span>12 €</span><span>24 €</span><span>60 €</span><span>120 € al año</span></div></div>
+      <div class="q"><b class="qn">16</b><p>¿Te interesa definir las necesidades del barrio y validar las propuestas de los productores en el grupo motor de la prueba piloto?</p><div class="opts"><span>Sí</span><span>Depende</span><span>No</span></div></div>
+      <div class="q"><b class="qn">17</b><p>¿En qué tareas participarías?</p><div class="opts"><span>Organizar actividades</span><span>Ayudar a gestionar la tienda en algunos momentos</span><span>Buscar más productores</span></div></div>
+    </div>
+  </div>
+</section>
+
+<nav class="nav" aria-label="Navegación de diapositivas">
+  <button type="button" id="prev" aria-label="Anterior">↑</button>
+  <span class="count" id="count"></span>
+  <button type="button" id="next" aria-label="Siguiente">↓</button>
+</nav>
+
+<script>
+(function () {
+  // Navegación
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var count = document.getElementById('count');
+  function current() {
+    var y = window.scrollY + window.innerHeight / 3, idx = 0;
+    slides.forEach(function (s, i) { if (s.offsetTop <= y) idx = i; });
+    return idx;
+  }
+  function go(i) { slides[Math.max(0, Math.min(slides.length - 1, i))].scrollIntoView(); }
+  function update() { count.textContent = (current() + 1) + ' / ' + slides.length; }
+  document.getElementById('prev').addEventListener('click', function () { go(current() - 1); });
+  document.getElementById('next').addEventListener('click', function () { go(current() + 1); });
+  document.addEventListener('keydown', function (e) {
+    var t = e.target.tagName;
+    if (t === 'INPUT' || t === 'SELECT' || t === 'TEXTAREA') return;
+    if (['ArrowDown', 'ArrowRight', 'PageDown'].indexOf(e.key) > -1) { e.preventDefault(); go(current() + 1); }
+    if (['ArrowUp', 'ArrowLeft', 'PageUp'].indexOf(e.key) > -1) { e.preventDefault(); go(current() - 1); }
+  });
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+
+  // Calculadora
+  var lang = 'es';
+  var fmt = { format: function (n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); } };
+  function eur(n) { return fmt.format(n) + ' €'; }
+  function range(a, b) { return a === b ? eur(a) : eur(a) + ' – ' + eur(b); }
+  var $ = function (id) { return document.getElementById(id); };
+  function calc() {
+    var rentM2 = +$('district').value, m2 = +$('m2').value;
+    var members = +$('members').value, fee = +$('fee').value;
+    $('m2-out').textContent = m2 + ' m²';
+    $('members-out').textContent = members;
+    var rent = rentM2 * m2, opLo = 17 * m2, opHi = 30 * m2, amLo = 5.5 * m2, amHi = 7.5 * m2, staff = 3750;
+    var lo = rent + opLo + amLo + staff, hi = rent + opHi + amHi + staff;
+    $('r-rent').textContent = eur(rent);
+    $('r-op').textContent = range(opLo, opHi);
+    $('r-am').textContent = range(amLo, amHi);
+    $('r-staff').textContent = eur(staff);
+    $('r-total').textContent = range(lo, hi);
+    var cover = members * fee / 12, mid = (lo + hi) / 2, pct = Math.min(100, cover / mid * 100);
+    $('r-fill').style.width = pct + '%';
+    $('r-cover').innerHTML = lang === 'ca'
+      ? members + ' socis × ' + fee + ' €/any aporten <b>' + eur(cover) + ' al mes</b>, al voltant del ' + fmt.format(pct) + '% del cost. La resta la cobreixen els lloguers d\'espai dels productors.'
+      : members + ' socios × ' + fee + ' €/año aportan <b>' + eur(cover) + ' al mes</b>, alrededor del ' + fmt.format(pct) + '% del coste. El resto lo cubren los alquileres de espacio de los productores.';
+  }
+  ['district', 'm2', 'members', 'fee'].forEach(function (id) { $(id).addEventListener('input', calc); });
+  $('calc-form').addEventListener('submit', function (e) { e.preventDefault(); });
+
+  // Idioma
+  var CA = {"Proyecto": "Projecte", "Una red de tiendas de barrio en Barcelona gestionadas en común por productores, elaboradores y artesanos. Producto del campo, en la tienda de la esquina, con trato directo.": "Una xarxa de botigues de barri a Barcelona gestionades en comú per productors, elaboradors i artesans. Producte del camp, a la botiga de la cantonada, amb tracte directe.", "Circuito corto": "Circuit curt", "Ecológico": "Ecològic", "De temporada": "De temporada", "Precio justo": "Preu just", "Trazabilidad total": "Traçabilitat total", "Por qué": "Per què", "Los barrios pierden tiendas y el campo no llega a la ciudad": "Els barris perden botigues i el camp no arriba a la ciutat", "Desertización comercial": "Desertització comercial", "Cierran tiendas de barrio y crecen la oferta turística y las grandes cadenas. Quedan locales vacíos y paradas de mercado cerradas.": "Tanquen botigues de barri i creixen l'oferta turística i les grans cadenes. Queden locals buits i parades de mercat tancades.", "Pobreza alimentaria": "Pobresa alimentària", "En muchos barrios cuesta encontrar producto fresco y de calidad a precio justo.": "En molts barris costa trobar producte fresc i de qualitat a preu just.", "El productor no puede solo": "El productor no pot sol", "Le falta tiempo para producir y vender a la vez, y variedad para llenar una tienda todo el año.": "Li falta temps per produir i vendre alhora, i varietat per omplir una botiga tot l'any.", "Costes muy altos": "Costos molt alts", "Alquiler, personal y la electricidad del frío industrial hacen inviable una tienda individual.": "El lloguer, el personal i l'electricitat del fred industrial fan inviable una botiga individual.", "Alineado con la Estrategia de Alimentación Saludable y Sostenible Barcelona 2030 y el espacio Agròpolis.": "Alineat amb l'Estratègia d'Alimentació Saludable i Sostenible Barcelona 2030 i l'espai Agròpolis.", "La idea": "La idea", "Una tienda que no vive del margen, sino del espacio compartido": "Una botiga que no viu del marge, sinó de l'espai compartit", "del precio de venta llega íntegro a quien produce": "del preu de venda arriba íntegre a qui produeix", "Tienda convencional": "Botiga convencional", "Compra y revende con margen": "Compra i revèn amb marge", "El productor fija su precio": "El productor fixa el seu preu", "Un propietario asume todo": "Un propietari ho assumeix tot", "Costes y tareas repartidos": "Costos i tasques repartits", "Producto de gran distribución": "Producte de gran distribució", "Solo producción propia": "Només producció pròpia", "Punto de despacho": "Punt de despatx", "Espacio de encuentro del barrio": "Espai de trobada del barri", "Los productores alquilan su espacio de exposición y una cooperativa (o entidad similar) gestiona la tienda.": "Els productors lloguen el seu espai d'exposició i una cooperativa (o entitat similar) gestiona la botiga.", "Quién participa": "Qui hi participa", "Dos niveles de socios y un equipo estable": "Dos nivells de socis i un equip estable", "Socios principales": "Socis principals", "Productores, elaboradores y artesanos": "Productors, elaboradors i artesans", "Deciden el modelo y la estrategia": "Decideixen el model i l'estratègia", "Legalmente constituidos": "Legalment constituïts", "Más del 50% de ingredientes y cantidad de producción propia o local": "Més del 50% d'ingredients i quantitat de producció pròpia o local", "Atienden en la tienda un día a la semana": "Atenen a la botiga un dia a la setmana", "Socios secundarios": "Socis secundaris", "Vecindario y entidades": "Veïnat i entitats", "Pagan una cuota periódica que ayuda a cubrir los costes fijos": "Paguen una quota periòdica que ajuda a cobrir els costos fixos", "Acceso preferente o condiciones especiales": "Accés preferent o condicions especials", "Validan la propuesta en el grupo motor": "Validen la proposta al grup motor", "Dinamizan actividades": "Dinamitzen activitats", "Gestión": "Gestió", "Cooperativa gestora y equipo de tienda": "Cooperativa gestora i equip de botiga", "Reglamento interno y acuerdos con cada productor": "Reglament intern i acords amb cada productor", "3 personas con salario digno": "3 persones amb sou digne", "Logística compartida": "Logística compartida", "Transparencia total de ventas": "Transparència total de vendes", "Dentro de la tienda": "Dins la botiga", "Cada zona tiene su tarifa según lo que cuesta": "Cada zona té la seva tarifa segons el que costa", "Murales de frío y congelado": "Murals de fred i congelat", "Carne, lácteos, fruta delicada, platos preparados": "Carn, làctics, fruita delicada, plats preparats", "Pared seco": "Paret sec", "Conservas, aceites": "Conserves, olis", "Góndolas centrales": "Gòndoles centrals", "Huerta no refrigerada y despensa": "Horta no refrigerada i rebost", "Productor de la semana": "Productor de la setmana", "Degustación": "Degustació", "Córner artesano": "Córner artesà", "Escaparate": "Aparador", "Caja inteligente": "Caixa intel·ligent", "Entrada": "Entrada", "Lineales secos · tarifa base": "Lineals secs · tarifa base", "La más económica. Mobiliario de 80 a 120 €/m². Pequeña prima en zonas de paso o a la altura de los ojos.": "La més econòmica. Mobiliari de 80 a 120 €/m². Petita prima a les zones de pas o a l'alçada dels ulls.", "Refrigerado y congelado · tarifa alta": "Refrigerat i congelat · tarifa alta", "Maquinaria de 250 a 350 €/m² y electricidad de 12 a 18 €/m² al mes, repercutidas en la tarifa.": "Maquinària de 250 a 350 €/m² i electricitat de 12 a 18 €/m² al mes, repercutides a la tarifa.", "Córner artesano · tarifa ajustada": "Córner artesà · tarifa ajustada", "Ropa, pintura, muebles o decoración. Sin frío ni iluminación alimentaria, aprovecha el paso de clientes.": "Roba, pintura, mobles o decoració. Sense fred ni il·luminació alimentària, aprofita el pas de clients.", "Presencia rotativa": "Presència rotativa", "Cada semana un productor atiende en persona, en las horas de más afluencia.": "Cada setmana un productor atén en persona, a les hores de més afluència.", "Plano orientativo de un local tipo de 100 a 150 m².": "Plànol orientatiu d'un local tipus de 100 a 150 m².", "Horario y equipo": "Horari i equip", "Abierta 60 horas a la semana sin horas extra": "Oberta 60 hores a la setmana sense hores extres", "Apertura al público · 3.120 h": "Obertura al públic · 3.120 h", "apertura (10 h × 6 días)": "obertura (10 h × 6 dies)", "vacaciones": "vacances", "descanso por festivos": "descans per festius", "bajas e imprevistos": "baixes i imprevistos", "3 personas": "3 persones", "25 h semanales cada una, 3.900 h al año en total": "25 h setmanals cadascuna, 3.900 h l'any en total", "de margen para cubrir ausencias sin cerrar": "de marge per cobrir absències sense tancar", "brutos al mes por persona, sobre una base de 2.000 € a jornada completa": "bruts al mes per persona, sobre una base de 2.000 € a jornada completa", "Tecnología": "Tecnologia", "Herramientas para que compartir sea fácil": "Eines perquè compartir sigui fàcil", "Gestión compartida": "Gestió compartida", "Turnos y bolsa de horas, ventas de cada productor en tiempo real y cobro de cuotas de socios.": "Torns i borsa d'hores, vendes de cada productor en temps real i cobrament de quotes de socis.", "IA contra el desperdicio": "IA contra el malbaratament", "Predicción de demanda para planificar cultivos en común y ajustar la oferta al perfil de cada barrio.": "Predicció de la demanda per planificar cultius en comú i ajustar l'oferta al perfil de cada barri.", "Trazabilidad con SialSIG": "Traçabilitat amb SialSIG", "Etiquetas QR con la historia del producto, la fecha de cosecha y la ubicación de la finca. Origen y temporada en albaranes y facturas.": "Etiquetes QR amb la història del producte, la data de collita i la ubicació de la finca. Origen i temporada en albarans i factures.", "Caja y báscula conectadas": "Caixa i balança connectades", "Cobro automático de efectivo y balanzas vinculadas al inventario compartido.": "Cobrament automàtic d'efectiu i balances vinculades a l'inventari compartit.", "Taquillas transparentes y refrigeradas para recoger pedidos o comprar fuera de horario.": "Taquilles transparents i refrigerades per recollir comandes o comprar fora d'horari.", "Logística colaborativa": "Logística col·laborativa", "Rutas compartidas entre productores para reducir costes y huella de carbono.": "Rutes compartides entre productors per reduir costos i petjada de carboni.", "Números": "Números", "¿Cuánto cuesta abrir una tienda al mes?": "Quant costa obrir una botiga al mes?", "Distrito": "Districte", "Superficie del local:": "Superfície del local:", "Socios del barrio (ejemplo)": "Socis del barri (exemple)", "Número de socios:": "Nombre de socis:", "Cuota anual": "Quota anual", "12 €/año": "12 €/any", "24 €/año": "24 €/any", "60 €/año": "60 €/any", "120 €/año": "120 €/any", "Alquiler": "Lloguer", "Precio medio de oferta del distrito": "Preu mitjà d'oferta del districte", "Suministros y tasas": "Subministraments i taxes", "Luz, agua, basuras, IBI, mantenimiento, seguros (17–30 €/m²)": "Llum, aigua, escombraries, IBI, manteniment, assegurances (17–30 €/m²)", "Amortización del equipamiento": "Amortització de l'equipament", "Frío, mobiliario y TPV (5,50–7,50 €/m²)": "Fred, mobiliari i TPV (5,50–7,50 €/m²)", "Equipo de tienda": "Equip de botiga", "3 × 1.250 € brutos": "3 × 1.250 € bruts", "Total al mes": "Total al mes", "Estimación con los datos del proyecto técnico (precios de oferta en portales, marzo de 2026). No incluye cotizaciones a la Seguridad Social, IVA ni la inversión inicial de 42.000 a 62.000 € en equipamiento.": "Estimació amb les dades del projecte tècnic (preus d'oferta en portals, març de 2026). No inclou cotitzacions a la Seguretat Social, IVA ni la inversió inicial de 42.000 a 62.000 € en equipament.", "Barrio vivo": "Barri viu", "Más que una tienda: un punto de encuentro": "Més que una botiga: un punt de trobada", "La tienda sale a la calle y recupera el espíritu del mercado de payés, con la persona que produce detrás del mostrador.": "La botiga surt al carrer i recupera l'esperit del mercat de pagès, amb la persona que produeix darrere el taulell.", "Talleres sobre alimentación": "Tallers sobre alimentació", "Degustaciones y jornadas gastronómicas": "Degustacions i jornades gastronòmiques", "Charla con el productor de la semana": "Xerrada amb el productor de la setmana", "Actividades en la calle": "Activitats al carrer", "Fiestas de barrio": "Festes de barri", "Galería de arte y artesanía local": "Galeria d'art i artesania local", "Cocina compartida para el día a día": "Cuina compartida per al dia a dia", "Sesiones previas de difusión": "Sessions prèvies de difusió", "Hoja de ruta": "Full de ruta", "Cinco fases hasta abrir la primera tienda": "Cinc fases fins a obrir la primera botiga", "Diagnosis": "Diagnosi", "Renta, pobreza alimentaria y gasto familiar por barrios.": "Renda, pobresa alimentària i despesa familiar per barris.", "Modelo": "Model", "Roles, aspectos legales, gobernanza y propuesta de precios.": "Rols, aspectes legals, governança i proposta de preus.", "Prospección": "Prospecció", "Locales vacíos, paradas de mercado, acuerdos con comercios y viabilidad.": "Locals buits, parades de mercat, acords amb comerços i viabilitat.", "Alianzas": "Aliances", "Validación con Agròpolis y los grupos motor del barrio.": "Validació amb Agròpolis i els grups motor del barri.", "Apertura": "Obertura", "Plan final de ejecución y puesta en marcha.": "Pla final d'execució i posada en marxa.", "Equipo y aliados": "Equip i aliats", "Una red que ya está en marcha": "Una xarxa que ja està en marxa", "Redacción del proyecto y coordinación de la red": "Redacció del projecte i coordinació de la xarxa", "Modelo de negocio y viabilidad": "Model de negoci i viabilitat", "Estrategia de Alimentación Saludable y Sostenible BCN 2030": "Estratègia d'Alimentació Saludable i Sostenible BCN 2030", "Redes del sector:": "Xarxes del sector:", "Coordinadora de Mercat de Pagès, Terra Pagesa, Xarxa d'Obradors Compartits y agrupaciones de artesanos.": "Coordinadora de Mercat de Pagès, Terra Pagesa, Xarxa d'Obradors Compartits i agrupacions d'artesans.", "Mapa": "Mapa", "Dónde tiene sentido abrir": "On té sentit obrir", "Barcelona y su área metropolitana, con origen de producto en los parques agrarios. Prueba piloto propuesta en Bon Pastor y Baró de Viver (Sant Andreu).": "Barcelona i la seva àrea metropolitana, amb origen de producte als parcs agraris. Prova pilot proposada al Bon Pastor i Baró de Viver (Sant Andreu).", "Información del Institut Metròpoli elaborada por SialSIG. Parte de los datos está pendiente de autorización para su difusión.": "Informació de l'Institut Metròpoli elaborada per SialSIG. Part de les dades està pendent d'autorització per a la seva difusió.", "¿No se ve el mapa?": "No es veu el mapa?", "Ábrelo en ArcGIS": "Obre'l a ArcGIS", "Queremos tu opinión": "Volem la teva opinió", "Lo construimos con el vecindario": "Ho construïm amb el veïnat", "¿Echas de menos producto fresco, de temporada y con trato directo con el payés en tu barrio?": "Trobes a faltar producte fresc, de temporada i amb tracte directe amb el pagès al teu barri?", "Mucho": "Molt", "Bastante": "Bastant", "Poco": "Poc", "Nada": "Gens", "¿Usarías taquillas inteligentes para recoger pedidos después del trabajo?": "Faries servir taquilles intel·ligents per recollir comandes després de la feina?", "Sí": "Sí", "Depende": "Depèn", "No": "No", "¿Serías socio para ayudar a sostener la tienda? ¿Con qué cuota?": "Series soci per ajudar a sostenir la botiga? Amb quina quota?", "120 € al año": "120 € l'any", "¿Te gustaría formar parte del grupo motor de la prueba piloto?": "T'agradaria formar part del grup motor de la prova pilot?", "Organizar actividades": "Organitzar activitats", "Ayudar en la tienda": "Ajudar a la botiga", "Buscar productores": "Buscar productors", "Prospección territorial, intervención comunitaria y grupos motor vecinales": "Prospecció territorial, intervenció comunitària i grups motor veïnals", "Digitalización de productores, grupos motor y referentes productores en los barrios": "Digitalització de productors, grups motor i referents productors als barris", "Encuesta al vecindario": "Enquesta al veïnat", "Un cuestionario para validar el modelo: devolver la compra de proximidad a los barrios, acercar a quien produce y a quien consume, y frenar la desertización comercial.": "Un qüestionari per validar el model: retornar el proveïment de proximitat als barris, apropar qui produeix i qui consumeix, i frenar la desertització comercial.", "Bloque 1": "Bloc 1", "Bloque 2": "Bloc 2", "Bloque 3": "Bloc 3", "Hábitos y necesidades de consumo en el barrio": "Hàbits i necessitats de consum al barri", "Dinamización comunitaria": "Dinamització comunitària", "La tienda como punto de encuentro.": "La botiga com a punt de trobada.", "Socio secundario y participación": "Soci secundari i participació", "La ciudadanía ayuda a sostener el local y comparte sus costes.": "La ciutadania ajuda a sostenir el local i en comparteix els costos.", "¿Qué productos te interesaría comprar en esta tienda?": "Quins productes t'interessaria comprar en aquesta botiga?", "Fresco de huerta": "Producte fresc d'horta", "Elaborados: quesos, embutidos, conservas, platos preparados": "Elaborats: formatges, embotits, conserves, plats preparats", "Artesanía local: decoración, muebles, ropa": "Artesania local: decoració, mobles, roba", "¿Te importa tener etiquetas QR con la historia del producto, la fecha de cosecha y la finca?": "T'importa tenir etiquetes QR amb la història del producte, la data de collita i la finca?", "¿Compras en mercados municipales y tiendas de barrio?": "Compres en mercats municipals i botigues de barri?", "Si no vas, ¿por qué?": "Si no hi vas, per què?", "Tener que comprar en varios sitios": "Haver de comprar en diferents llocs", "Esperar en cada tienda o parada": "Esperar a cada botiga o parada", "El trato": "El tracte", "El precio": "El preu", "Otros": "Altres", "Otras": "Altres", "¿Cómo debería ser y qué debería ofrecer una tienda para ir antes que al supermercado?": "Com hauria de ser i què hauria d'oferir una botiga per anar-hi abans que a un supermercat?", "Respuesta abierta": "Resposta oberta", "¿Qué actividades comunitarias te gustaría encontrar?": "Quines activitats comunitàries t'agradaria trobar-hi?", "Charla con el productor (uno distinto cada semana)": "Xerrada amb el productor (un de diferent cada setmana)", "¿Debería tener taquillas inteligentes u otras automatizaciones si así baja el precio?": "Hauria de tenir taquilles intel·ligents o altres automatitzacions si així baixa el preu?", "¿Usarías las taquillas para recoger pedidos fuera de horario, por ejemplo después del trabajo?": "Faries servir les taquilles per recollir comandes fora d'horari, per exemple després de la feina?", "¿Y taquillas transparentes donde ver el producto y comprarlo directamente?": "I taquilles transparents on veure el producte i comprar-lo directament?", "¿Qué te parece comprar donde el precio de venta lo recibe íntegro quien produce o elabora?": "Què et sembla comprar on el preu de venda el rep íntegre qui produeix o elabora?", "¿Qué sueldo debería tener un productor? ¿Y el personal de la tienda?": "Quin sou hauria de tenir un productor? I el personal de la botiga?", "En revisión": "En revisió", "¿La tienda podría ser también una galería para exponer artesanía y pintura que decore el local?": "La botiga podria ser també una galeria per exposar artesania i pintura que decori el local?", "¿Te interesaría comida preparada para el día a día, de una cocina compartida?": "T'interessaria menjar preparat per al dia a dia, d'una cuina compartida?", "Ideas a contrastar": "Idees a contrastar", "Tienda vinculada a las fiestas de barrio": "Botiga vinculada a les festes de barri", "Degustación siempre disponible, como una parada de mercado con barra": "Degustació sempre disponible, com una parada de mercat amb barra", "¿Pagarías una cuota periódica como socio para sostener los costes fijos, con acceso exclusivo o condiciones preferentes? ¿Cuánto?": "Pagaries una quota periòdica com a soci per sostenir els costos fixos, amb accés exclusiu o condicions preferents? Quant?", "¿Te interesa definir las necesidades del barrio y validar las propuestas de los productores en el grupo motor de la prueba piloto?": "T'interessa definir les necessitats del barri i validar les propostes dels productors al grup motor de la prova pilot?", "¿En qué tareas participarías?": "En quines tasques participaries?", "Ayudar a gestionar la tienda en algunos momentos": "Ajudar a gestionar la botiga en alguns moments", "Buscar más productores": "Buscar més productors", "Taquillas inteligentes": "Taquilles intel·ligents", "¿Debería tenerlas la tienda, u otras automatizaciones, si así baja el precio?": "Les hauria de tenir la botiga, o altres automatitzacions, si així baixa el preu?", "¿Las usarías para recoger pedidos fuera de horario, por ejemplo después del trabajo?": "Les faries servir per recollir comandes fora d'horari, per exemple després de la feina?", "Tres claves": "Tres claus", "Variedad, espacios que ya existen y una red": "Varietat, espais que ja existeixen i una xarxa", "Variedad todo el año": "Varietat tot l'any", "Fresco": "Fresc", "Elaborados": "Elaborats", "Artesanía": "Artesania", "Oferta completa": "Oferta completa", "Un solo productor no tiene variedad ni stock para llenar una tienda todo el año, y a menudo acaba comprando a la gran distribución. Juntos, la oferta es completa y diversa.": "Un únic productor no té varietat ni estoc per omplir una botiga tot l'any, i sovint acaba comprant a la gran distribució. Junts, l'oferta és completa i diversa.", "Espacios que ya existen": "Espais que ja existeixen", "Locales vacíos en planta baja": "Locals buits en planta baixa", "Paradas de mercado municipal": "Parades de mercat municipal", "Equipamientos comunitarios": "Equipaments comunitaris", "Y alianzas con otras iniciativas que necesiten local comercial, almacén o un nodo logístico con registro sanitario.": "I aliances amb altres iniciatives que necessitin local comercial, emmagatzematge o un node logístic amb registre sanitari.", "Una red de tiendas": "Una xarxa de botigues", "Tiendas conectadas entre sí, que se apoyan para que también sean viables en los barrios con menos recursos.": "Botigues interconnectades entre elles, que es donen suport perquè també siguin viables als barris amb menys recursos."};
+  var nodes = [];
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  var n;
+  while ((n = walker.nextNode())) {
+    if (n.parentElement.closest('script, style, #r-cover')) continue;
+    var raw = n.nodeValue, key = raw.trim();
+    if (!key || !CA[key]) continue;
+    var lead = raw.match(/^\s*/)[0], trail = raw.match(/\s*$/)[0];
+    nodes.push({ node: n, es: key, ca: CA[key], lead: lead, trail: trail });
+  }
+  var ARIA = {
+    es: { prev: 'Anterior', next: 'Siguiente', nav: 'Navegación de diapositivas', iframe: 'Mapa del proyecto Botigues Compartides' },
+    ca: { prev: 'Anterior', next: 'Següent', nav: 'Navegació de diapositives', iframe: 'Mapa del projecte Botigues Compartides' }
+  };
+  var buttons = document.querySelectorAll('.lang button');
+  function setLang(l) {
+    lang = l === 'ca' ? 'ca' : 'es';
+    nodes.forEach(function (o) { o.node.nodeValue = o.lead + o[lang] + o.trail; });
+    document.documentElement.lang = lang;
+    Array.prototype.forEach.call(buttons, function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === lang)); });
+    $('prev').setAttribute('aria-label', ARIA[lang].prev);
+    $('next').setAttribute('aria-label', ARIA[lang].next);
+    document.querySelector('.nav').setAttribute('aria-label', ARIA[lang].nav);
+    var fr = document.querySelector('.map-frame iframe'); if (fr) fr.title = ARIA[lang].iframe;
+    calc();
+    try { localStorage.setItem('bc-lang', lang); } catch (e) {}
+  }
+  Array.prototype.forEach.call(buttons, function (b) { b.addEventListener('click', function () { setLang(b.dataset.lang); }); });
+  var start = 'es';
+  try { start = localStorage.getItem('bc-lang') || 'es'; } catch (e) {}
+  if (location.hash === '#ca') start = 'ca';
+  if (location.hash === '#es') start = 'es';
+  setLang(start);
+})();
+</script>
+</body>
+</html>
